@@ -1,28 +1,46 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import TweetList from './TweetList';
 
 class App extends Component {
+    state = {
+      tweets: [],
+      hashtag: ""
+    };
+
+componentDidMount(){
+  //done once
+  
+}
+  stuffChanged = evt => {
+    console.log(evt)
+    this.setState({
+      hashtag: evt.target.value
+    });
+    if (evt.target.value.length > 1) {
+        fetch("https://kea-alt-del.dk/twitter/api/?hashtag="+ evt.target.value +"&count=10").then(res => res.json()).then(data => {
+        this.setState({
+          tweets: data.statuses
+        });
+      });
+    } 
+  }
   render() {
+    // const tweets = data.map(tweet => {})
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
+      <main>
+        <h1>#TwitterFeed</h1>
+        <p>Searching for #{this.state.hashtag}</p>
+        <input 
+        type="text"
+        onChange={this.stuffChanged} 
+        name="search" 
+        value={this.state.hashtag} />
+        <TweetList  tweets={this.state.tweets} />
+      </main>
     );
   }
 }
+
+
 
 export default App;
